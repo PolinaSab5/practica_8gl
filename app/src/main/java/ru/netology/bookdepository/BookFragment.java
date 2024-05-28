@@ -17,21 +17,31 @@ import java.util.UUID;
 
 public class BookFragment extends Fragment {
 
+    private static final String ARG_BOOK_ID = "book_id";
     private Book mBook;
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mReadedCheckBox;
     private CompoundButton.OnCheckedChangeListener newOnCheckedChangelListener;
 
+    public static BookFragment newInstance(UUID bookId){
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_BOOK_ID, bookId);
+        BookFragment fragment = new BookFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        UUID bookId =(UUID) getArguments().getSerializable(ARG_BOOK_ID);
+         mBook = Booklab.get(getActivity()).getBook(bookId);
 
     }
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_book, container, false);
         mTitleField = (EditText) v.findViewById(R.id.book_title);
+        mTitleField.setText(mBook.getTitle());
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -52,6 +62,7 @@ public class BookFragment extends Fragment {
         mDateButton.setText(mBook.getDate().toString());
         mDateButton.setEnabled(false);
         mReadedCheckBox = (CheckBox) v.findViewById(R.id.book_readed);
+        mReadedCheckBox.setChecked(mBook.isReaded());
         mReadedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

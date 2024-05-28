@@ -21,7 +21,9 @@ public class BookActivity extends SingleFragmentActivity {
     }
     @Override
     protected Fragment createFragment(){
-        return new BookFragment();
+        UUID bookId = (UUID) getIntent()
+                .getSerializableExtra(EXTRA_BOOK_ID);
+        return BookFragment.newInstance(bookId);
     }
 
     }

@@ -32,12 +32,20 @@ public class BookListFragment extends Fragment {
         updateUI();
         return view;
     }
-
+     @Override
+     public void onResume(){
+        super.onResume();
+        updateUI();
+     }
     private void updateUI() {
         Booklab booklab = Booklab.get(getActivity());
         List<Book> books = booklab.getBooks();
-        mAdapter = new BookAdapter(books, getActivity());
-        mBookRecyclerView.setAdapter(mAdapter);
+        if (mAdapter == null) {
+            mAdapter = new BookAdapter(books, getActivity());
+            mBookRecyclerView.setAdapter(mAdapter);
+        } else {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     private class BookHolder extends RecyclerView.ViewHolder
@@ -50,7 +58,7 @@ public class BookListFragment extends Fragment {
         @Override
         public void onClick(View v) {
             if (getActivity() != null) {
-                Intent intent = BookActivity.newIntent(getActivity(), mBook.getId());
+                Intent intent = BookActivity.newIntent(getActivity(),mBook.getId());
                 startActivity(intent);
             }
         }
