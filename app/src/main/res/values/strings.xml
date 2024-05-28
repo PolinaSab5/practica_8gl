@@ -4,4 +4,5 @@
     <string name="book_title_label">Заголовок</string>
     <string name="book_details_label">Описание</string>
     <string name="book_readed_label">Прочтена?</string>
+    <string name="date_picker_title">Дата  начала прочтения </string>
 </resources>
