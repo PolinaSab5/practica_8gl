@@ -3,12 +3,15 @@ package ru.netology.bookdepository;
 import static android.app.PendingIntent.getActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,23 +40,30 @@ public class BookListFragment extends Fragment {
         mBookRecyclerView.setAdapter(mAdapter);
     }
 
-    private class BookHolder extends RecyclerView.ViewHolder {
-
+    private class BookHolder extends RecyclerView.ViewHolder
+       implements OnClickListener{
         private Book mBook;
         private TextView mTitleTextView;
         private TextView mDateTextView;
         private CheckBox mReadedCheckBox;
 
+        @Override
+        public void onClick(View v) {
+            if (getActivity() != null) {
+                Intent intent = BookActivity.newIntent(getActivity(), mBook.getId());
+                startActivity(intent);
+            }
+        }
         public BookHolder(View itemView) {
             super(itemView);
-           mTitleTextView = (TextView)
-                   itemView.findViewById(R.id.list_item_book_title_text_view);
-           mDateTextView = (TextView)
-                   itemView.findViewById(R.id.list_item_book_date_text_view);
-           mReadedCheckBox = (CheckBox)
-                   itemView.findViewById(R.id.list_item_book_readed_check_box);
+            itemView.setOnClickListener((OnClickListener) this);
+            mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_book_title_text_view);
+            mDateTextView = (TextView) itemView.findViewById(R.id.list_item_book_date_text_view);
+            mReadedCheckBox = (CheckBox) itemView.findViewById(R.id.list_item_book_readed_check_box);
         }
-        public void bindBook (Book book){
+
+
+        public void bindBook(Book book) {
             mBook = book;
             mTitleTextView.setText(mBook.getTitle());
             mDateTextView.setText(mBook.getDate().toString());
@@ -88,5 +98,7 @@ public class BookListFragment extends Fragment {
             return mBooks.size();
         }
     }
+
 }
+
 

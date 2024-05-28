@@ -17,30 +17,22 @@
             android:layout_marginTop="68dp"
             android:padding="4dp"
             android:text="Дата прочтения книги" />
+
+        <TextView
+            android:id="@+id/list_item_book_title_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text="Заголовок книги"
+            android:textStyle="bold" />
+
+        <CheckBox
+            android:id="@+id/list_item_book_readed_check_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text="CheckBox" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/list_item_book_title_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="4dp"
-        android:text="Заголовок книги"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="40dp" />
-
-    <CheckBox
-        android:id="@+id/list_item_book_readed_check_box"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="4dp"
-        android:text="CheckBox"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="1dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

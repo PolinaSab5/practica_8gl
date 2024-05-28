@@ -13,6 +13,8 @@ import android.widget.EditText;
 
 import androidx.fragment.app.Fragment;
 
+import java.util.UUID;
+
 public class BookFragment extends Fragment {
 
     private Book mBook;
@@ -24,10 +26,9 @@ public class BookFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBook = new Book();
+
 
     }
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_book, container, false);
         mTitleField = (EditText) v.findViewById(R.id.book_title);
