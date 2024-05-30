@@ -1,4 +1,5 @@
-package ru.netology.bookdepository;
+package com.example.myapplication;
+
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -20,18 +22,22 @@ import java.util.Date;
 import java.util.UUID;
 
 public class BookFragment extends Fragment {
+    public EditText mTitleField;
+    public Book mBook;
+    public Button mDateButton;
+    public CheckBox mReadedCheckBox;
 
     private static final String ARG_BOOK_ID = "book_id";
     private static final String DIALOG_DATE = "DialogDate";
     private static final int REQUEST_DATE = 0;
-    private Book mBook;
-    private EditText mTitleField;
-    private Button mDateButton;
-    private CheckBox mReadedCheckBox;
-    private CompoundButton.OnCheckedChangeListener newOnCheckedChangelListener;
-    private FragmentManager manager;
-
-    public static BookFragment newInstance(UUID bookId) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        UUID bookId = (UUID) getArguments().getSerializable(ARG_BOOK_ID);
+        mBook = BookLab.get(getActivity()).getBook(bookId);
+    }
+    public static BookFragment newInstance(UUID bookId)
+    {
         Bundle args = new Bundle();
         args.putSerializable(ARG_BOOK_ID, bookId);
         BookFragment fragment = new BookFragment();
@@ -40,71 +46,63 @@ public class BookFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        UUID bookId = (UUID) getArguments().getSerializable(ARG_BOOK_ID);
-        mBook = Booklab.get(getActivity()).getBook(bookId);
-
-    }
-
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_book, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup
+            container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_book, container,
+                false);
         mTitleField = (EditText) v.findViewById(R.id.book_title);
         mTitleField.setText(mBook.getTitle());
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // Здесь намеренно оставлено пустое место
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mBook.setTitle(s.toString());
             }
-
 
             @Override
             public void afterTextChanged(Editable s) {
-                // И здесь тоже
+
             }
         });
-        mDateButton = (Button) v.findViewById(R.id.book_date);
+        mDateButton = (Button)v.findViewById(R.id.book_date);
         updateDate();
-        mDateButton.setText(mBook.getDate().toString());
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                FragmentManager manager = getFragmentManager();
                 DatePickerFragment dialog = DatePickerFragment.newInstance(mBook.getDate());
-                dialog.setTargetFragment(BookFragment.this, REQUEST_DATE);
+                dialog.setTargetFragment(BookFragment.this,REQUEST_DATE);
                 dialog.show(manager, DIALOG_DATE);
             }
         });
-
-
-        mReadedCheckBox = (CheckBox) v.findViewById(R.id.book_readed);
+        mReadedCheckBox = (CheckBox)v.findViewById(R.id.book_readed);
         mReadedCheckBox.setChecked(mBook.isReaded());
         mReadedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // Назначение флага прочтения книги
+                mBook.setReaded(isChecked);
             }
         });
         return v;
-
     }
 
     private void updateDate() {
-        updateDate();
+        mDateButton.setText(mBook.getDate().toString());
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != Activity.RESULT_OK) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (resultCode != Activity.RESULT_OK){
             return;
         }
-        if (requestCode == REQUEST_DATE) {
+        if (requestCode == REQUEST_DATE){
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mBook.setDate(date);
+            updateDate();
         }
     }
-
 }

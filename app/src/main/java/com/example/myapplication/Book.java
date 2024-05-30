@@ -1,4 +1,4 @@
-package ru.netology.bookdepository;
+package com.example.myapplication;
 
 import java.util.Date;
 import java.util.UUID;

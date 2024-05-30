@@ -1,4 +1,4 @@
-package ru.netology.bookdepository;
+package com.example.myapplication;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -43,23 +43,19 @@ public class DatePickerFragment extends DialogFragment {
 
         mDatePicker = (DatePicker) v.findViewById(R.id.dialog_date_date_picker);
         mDatePicker.init(year, month, day, null);
-        v = LayoutInflater.from(getActivity())
-                .inflate(R.layout.dialog_date, null);
-        return new AlertDialog.Builder(getActivity())
-                .setView(v)
-                .setTitle(R.string.date_picker_title)
+        return new AlertDialog.Builder(getActivity()).setView(v).setTitle(R.string.date_picker_title)
                 .setPositiveButton(android.R.string.ok,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                int year = mDatePicker.getYear();
-                                int month = mDatePicker.getMonth();
-                                int day = mDatePicker.getDayOfMonth();
+                new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int year = mDatePicker.getYear() ;
+                int month = mDatePicker.getMonth();
+                int day = mDatePicker.getDayOfMonth();
 
-                                Date date = new GregorianCalendar(year, month, day).getTime();
-                                sendResult(Activity.RESULT_OK, date);
-                            }
-                            }).create();
+                Date date = new GregorianCalendar(year, month, day).getTime();
+                sendResult(Activity.RESULT_OK, date);
+            }
+        }).create();
     }
     private void sendResult(int resultCode, Date date)
     {
@@ -71,5 +67,3 @@ public class DatePickerFragment extends DialogFragment {
         getTargetFragment().onActivityResult(getTargetRequestCode(),resultCode,intent);
     }
 }
-
-

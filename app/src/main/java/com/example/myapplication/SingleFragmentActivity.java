@@ -1,4 +1,4 @@
-package ru.netology.bookdepository;
+package com.example.myapplication;
 
 import android.os.Bundle;
 
@@ -13,13 +13,10 @@ public abstract class SingleFragmentActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment);
         FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment =
-                fm.findFragmentById(R.id.fragment_container);
-        if (fragment == null){
+        Fragment fragment = fm.findFragmentById(R.id.fragmentContainer);
+        if(fragment == null){
             fragment = createFragment();
-            fm.beginTransaction()
-                    .add(R.id.fragment_container, fragment)
-                    .commit();
+            fm.beginTransaction().add(R.id.fragmentContainer, fragment).commit();
         }
     }
 }
