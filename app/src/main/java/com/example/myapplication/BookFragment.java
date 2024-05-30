@@ -36,6 +36,11 @@ public class BookFragment extends Fragment {
         UUID bookId = (UUID) getArguments().getSerializable(ARG_BOOK_ID);
         mBook = BookLab.get(getActivity()).getBook(bookId);
     }
+    @Override
+    public void onPause() {
+        super.onPause();
+        BookLab.get(getActivity()).updateBook(mBook);
+    }
     public static BookFragment newInstance(UUID bookId)
     {
         Bundle args = new Bundle();

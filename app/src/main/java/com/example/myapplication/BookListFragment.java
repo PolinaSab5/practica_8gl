@@ -94,6 +94,7 @@ public void onCreate(Bundle savedInstanceState){
            mBookRecyclerView.setAdapter(mAdapter);
     }
         else{
+            mAdapter.setBooks(books);
             mAdapter.notifyDataSetChanged();
         }
 
@@ -141,6 +142,9 @@ public void onCreate(Bundle savedInstanceState){
         @Override
         public int getItemCount(){
             return  mBoooks.size();
+        }
+        public void setBooks(List<Book> books){
+            mBoooks = books;
         }
     }
 }

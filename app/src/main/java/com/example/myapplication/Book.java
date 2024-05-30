@@ -9,9 +9,11 @@ public class Book {
     private Date mDate;
     private boolean mReaded;
     public Book(){
-        mId = UUID.randomUUID();//Генерирование уникального индетификатора
-        mDate =new Date();
-
+        this(UUID.randomUUID());
+    }
+    public Book(UUID id) {
+        mId = id;
+        mDate = new Date();
     }
     public Date getDate(){
         return mDate;
