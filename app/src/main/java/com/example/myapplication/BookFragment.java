@@ -3,7 +3,12 @@ package com.example.myapplication;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -13,11 +18,15 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -28,15 +37,19 @@ public class BookFragment extends Fragment {
     public Button mDateButton;
     public CheckBox mReadedCheckBox;
     private Button mReportButton;
-
+private File mPhotoFile;
+    private ImageButton mPhotoButton;
+    private ImageView mPhotoView;
     private static final String ARG_BOOK_ID = "book_id";
     private static final String DIALOG_DATE = "DialogDate";
     private static final int REQUEST_DATE = 0;
+    private static final int REQUEST_PHOTO = 1;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UUID bookId = (UUID) getArguments().getSerializable(ARG_BOOK_ID);
         mBook = BookLab.get(getActivity()).getBook(bookId);
+        mPhotoFile = BookLab.get(getActivity()).getPhotoFile(mBook);
     }
     @Override
     public void onPause() {
@@ -75,18 +88,18 @@ public class BookFragment extends Fragment {
 
             }
         });
-        mDateButton = (Button)v.findViewById(R.id.book_date);
+        mDateButton = (Button) v.findViewById(R.id.book_date);
         updateDate();
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentManager manager = getFragmentManager();
                 DatePickerFragment dialog = DatePickerFragment.newInstance(mBook.getDate());
-                dialog.setTargetFragment(BookFragment.this,REQUEST_DATE);
+                dialog.setTargetFragment(BookFragment.this, REQUEST_DATE);
                 dialog.show(manager, DIALOG_DATE);
             }
         });
-        mReadedCheckBox = (CheckBox)v.findViewById(R.id.book_readed);
+        mReadedCheckBox = (CheckBox) v.findViewById(R.id.book_readed);
         mReadedCheckBox.setChecked(mBook.isReaded());
         mReadedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -95,7 +108,7 @@ public class BookFragment extends Fragment {
             }
 
         });
-        mReportButton = (Button)v.findViewById(R.id.book_report);
+        mReportButton = (Button) v.findViewById(R.id.book_report);
         mReportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,9 +120,32 @@ public class BookFragment extends Fragment {
                 startActivity(i);
             }
         });
+        mPhotoButton = (ImageButton) v.findViewById(R.id.book_camera);
+        final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        PackageManager packageManager = getActivity().getPackageManager();
+        boolean canTakePhoto = mPhotoFile != null && captureImage.resolveActivity(packageManager) != null;
+        if (canTakePhoto) {
+            Uri uri;
 
-        return v;
-    }
+            if (Build.VERSION.SDK_INT < 24)
+                uri = Uri.fromFile(mPhotoFile);
+            else
+                uri = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", mPhotoFile);
+            captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+            mPhotoButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivityForResult(captureImage, REQUEST_PHOTO);
+                }
+            });
+            mPhotoView = (ImageView) v.findViewById(R.id.book_photo);
+            updatePhotoView();
+            return v;
+        }
+            return v;
+        }
+
+
 
     private void updateDate() {
         mDateButton.setText(mBook.getDate().toString());
@@ -127,6 +163,14 @@ public class BookFragment extends Fragment {
         String report = getString(R.string.book_report, mBook.getTitle(), dateString, readedString);
         return report;
     }
+    private void updatePhotoView() {
+        if (mPhotoFile == null || !mPhotoFile.exists()) {
+            mPhotoView.setImageDrawable(null);
+        } else {
+        Bitmap bitmap = PictureUtils.getScaledBitmap( mPhotoFile.getPath(), getActivity());
+        mPhotoView.setImageBitmap(bitmap); }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode != Activity.RESULT_OK){
@@ -136,6 +180,8 @@ public class BookFragment extends Fragment {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mBook.setDate(date);
             updateDate();
+        } else if (requestCode == REQUEST_PHOTO){
+            updatePhotoView();
         }
     }
 }
